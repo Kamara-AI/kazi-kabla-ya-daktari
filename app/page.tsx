@@ -407,7 +407,7 @@ export default function Home() {
 
       {/* ── welcome ── */}
       {appState === 'welcome' && (
-        <div className="max-w-xl mx-auto px-4 py-10 flex flex-col gap-6">
+        <div className="max-w-3xl mx-auto px-4 py-10 flex flex-col gap-6">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
               Step 1 of 4
@@ -483,7 +483,7 @@ export default function Home() {
 
       {/* ── asking — conversation loop ── */}
       {appState === 'asking' && currentTurn && (
-        <div className="max-w-xl mx-auto px-4 py-8 flex flex-col gap-6">
+        <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-6">
           <QuestionLoop
             log={conversationLog}
             question={currentTurn.message}
@@ -508,7 +508,7 @@ export default function Home() {
 
       {/* ── reviewing ── */}
       {appState === 'reviewing' && (
-        <div className="max-w-xl mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto px-4 py-8">
           <SummaryReview
             accumulated={accumulated}
             onRemoveReported={(i) =>
@@ -526,7 +526,7 @@ export default function Home() {
 
       {/* ── handoff ── */}
       {appState === 'handoff' && (
-        <div className="max-w-xl mx-auto px-4 py-8 flex flex-col gap-8">
+        <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-8">
           {/* Header */}
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">
