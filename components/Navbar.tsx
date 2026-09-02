@@ -33,7 +33,7 @@ export default function Navbar() {
     >
       {/* Left: app name + tagline */}
       <div className="flex flex-col justify-center">
-        <span className="font-bold text-xl leading-tight">Kazi</span>
+        <span className="font-bold text-xl leading-tight">Wingu la Dalili</span>
         <span className="text-slate-300 text-sm leading-snug mt-0.5">
           {TAGLINES[lang]}
         </span>

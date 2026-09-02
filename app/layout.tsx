@@ -4,7 +4,7 @@ import { LanguageProvider } from '@/lib/languageContext';
 import Navbar from '@/components/Navbar';
 
 export const metadata: Metadata = {
-  title: 'Kazi: Kabla ya Daktari',
+  title: 'Wingu la Dalili',
   description:
     'Outpatient intake translator for Kenyan triage nurses. Not a diagnostic tool. Hackathon prototype.',
   // Prevent search engine indexing of a prototype health tool

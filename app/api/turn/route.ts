@@ -39,7 +39,7 @@ const PATIENT_ERROR_MESSAGE =
 // System prompt — byte-stable (no timestamps, no session ID, no patient data)
 // so it caches cleanly as the request prefix on every turn.
 // ---------------------------------------------------------------------------
-const TURN_SYSTEM_PROMPT = `You are the intake assistant for "Kabla ya Daktari" ("Before the Doctor"), used by patients in a clinic waiting room before they see a nurse or clinician.
+const TURN_SYSTEM_PROMPT = `You are the intake assistant for "Wingu la Dalili" ("Symptom Cloud"), used by patients in a clinic waiting room before they see a nurse or clinician.
 
 Your only job is to help the patient describe what they are experiencing, in their own words, so the nurse can read it in seconds. You are a listener and a note-taker. You are not a clinician.
 

@@ -28,8 +28,7 @@ export default function ConsentModal({ onConsent }: ConsentModalProps) {
           <p className="text-sm font-semibold uppercase tracking-widest opacity-80 mb-1">
             Kabla ya Kuanza · Before We Start
           </p>
-          <h1 className="text-3xl font-bold">Kazi</h1>
-          <p className="text-blue-200 text-base mt-1">Kabla ya Daktari</p>
+          <h1 className="text-3xl font-bold">Wingu la Dalili</h1>
         </div>
 
         {/* Body */}
