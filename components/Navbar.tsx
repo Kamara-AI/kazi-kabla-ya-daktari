@@ -31,9 +31,15 @@ export default function Navbar() {
       style={{ minHeight: '64px' }}
       aria-label="Application navigation"
     >
-      {/* Left: app name + tagline */}
+      {/* Left: app name + tagline + AI badge */}
       <div className="flex flex-col justify-center">
-        <span className="font-bold text-xl leading-tight">Wingu la Dalili</span>
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-xl leading-tight">Wingu la Dalili</span>
+          <span className="inline-flex items-center rounded-full bg-blue-600 text-white
+                           text-xs font-semibold px-2 py-0.5 tracking-wide uppercase">
+            AI-assisted
+          </span>
+        </div>
         <span className="text-slate-300 text-sm leading-snug mt-0.5">
           {TAGLINES[lang]}
         </span>

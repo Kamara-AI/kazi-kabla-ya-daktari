@@ -82,9 +82,22 @@ export default function ConsentModal({ onConsent }: ConsentModalProps) {
             </p>
           </div>
 
+          {/* AI disclosure */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <p className="font-semibold text-blue-900 text-sm mb-1">
+              AI-assisted — not a medical tool
+            </p>
+            <p className="text-sm text-blue-800">
+              This app uses an AI language model (Claude by Anthropic) to help
+              structure what you describe. The AI does not diagnose, prescribe,
+              or make clinical decisions. All output is reviewed by you before
+              it reaches the nurse.
+            </p>
+          </div>
+
           {/* Not medical advice */}
           <p className="text-xs text-gray-500 text-center">
-            This is a hackathon prototype. Not clinically validated.
+            Hackathon prototype — not clinically validated.
             Not for use with real patients in a production setting.
           </p>
         </div>
