@@ -153,8 +153,8 @@ function layoutText(content: string): PdfLine[][] {
   for (const raw of rawLines) {
     const trimmed = raw.trimEnd();
 
-    // Title line (all caps, leading text "KAZI INTAKE BRIEF")
-    if (trimmed === 'KAZI INTAKE BRIEF') {
+    // Title line — matches the first line emitted by summaryToText()
+    if (trimmed === 'KABLA YA DAKTARI \u2014 AI-assisted intake summary') {
       addLine(trimmed, TITLE_SIZE, 0, true, 0);
       continue;
     }

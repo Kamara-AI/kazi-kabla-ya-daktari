@@ -240,7 +240,8 @@ export default function VoiceInput({ onTranscript, onDangerSign, disabled = fals
             ? 'Microphone access denied. Please allow microphone access in your browser settings. / Ruhusa ya maikrofoni imekataliwa.'
             : `Could not start recording (${event.error}). Please try typing instead. / Haikuwezekana kurekodi. Jaribu kuandika.`;
         setErrorMessage(friendly);
-        onTranscript('');
+        // BUG-05: do NOT call onTranscript('') here — in the welcome state it
+        // would silently clear whatever the patient had already typed.
       };
 
       rec.onend = () => {

@@ -72,6 +72,7 @@ export default function Home() {
 
   // Handoff screen state
   const [copied, setCopied] = useState(false);
+  const [showProviders, setShowProviders] = useState(false); // BUG-09: toggled on handoff
 
   // Welcome screen state
   const [welcomeText, setWelcomeText] = useState('');
@@ -92,6 +93,7 @@ export default function Home() {
     setBusy(false);
     setAnswered(0);
     setCopied(false);
+    setShowProviders(false);
     setWelcomeText('');
     setShowInactivityWarning(false);
 
@@ -119,7 +121,9 @@ export default function Home() {
   }, [purge]);
 
   useEffect(() => {
-    if (appState === 'consent') return;
+    // BUG-06: emergency and selfharm screens must not auto-purge — a nurse
+    // reading the handoff card mid-handoff should never have it disappear.
+    if (appState === 'consent' || appState === 'emergency' || appState === 'selfharm') return;
 
     resetInactivityTimers();
 
@@ -285,18 +289,43 @@ export default function Home() {
 
   // ---------------------------------------------------------------------------
   // "Generate my summary" escape hatch — force the model to summarise now.
+  // BUG-01: only navigate to reviewing on success; stay in asking on failure.
   // ---------------------------------------------------------------------------
   const handleFinishEarly = useCallback(async () => {
     if (busy) return;
-    // force_summary tells the route to inject the finish instruction.
-    // Pass the current message list; if the last message is assistant the route
-    // adds a synthetic user turn so the API stays valid (see route.ts).
     const turn = await callTurn(messages, true);
-    if (turn) {
-      setAccumulated(applyTurn(accumulated, turn));
-    }
+    if (!turn) return; // network error — stay in asking, patient can retry
+    setAccumulated(applyTurn(accumulated, turn));
     setAppState('reviewing');
   }, [busy, messages, accumulated, callTurn]);
+
+  // ---------------------------------------------------------------------------
+  // "Add or correct something" — patient goes back from reviewing to asking.
+  //
+  // BUG-02: do NOT reuse the stale generate_summary currentTurn. Clear it and
+  // get a fresh question so the model does not immediately bounce back to
+  // generate_summary. The messages array does not include the generate_summary
+  // assistant message (it was never appended), so the model sees the last user
+  // answer and asks a natural follow-up.
+  // ---------------------------------------------------------------------------
+  const handleEditRequest = useCallback(async () => {
+    setCurrentTurn(null);
+    setAppState('asking'); // shows loading spinner (currentTurn === null)
+    const turn = await callTurn(messages);
+    if (!turn) return; // network error — stay in asking with spinner
+    if (turn.next_action === 'generate_summary') {
+      // Model still wants to wrap up — apply any new data and go back to reviewing.
+      setAccumulated(applyTurn(accumulated, turn));
+      setAppState('reviewing');
+      return;
+    }
+    const msgDanger = checkDangerSigns(turn.message);
+    if (msgDanger !== 'CLEAR') {
+      handleEmergency(msgDanger);
+      return;
+    }
+    setCurrentTurn(turn);
+  }, [messages, accumulated, callTurn, handleEmergency]);
 
   // ---------------------------------------------------------------------------
   // Handoff screen — PDF download and copy-to-clipboard
@@ -476,7 +505,7 @@ export default function Home() {
             onRemoveBelief={(i) =>
               setAccumulated(removeBelief(accumulated, i))
             }
-            onEdit={() => setAppState('asking')}
+            onEdit={handleEditRequest}
             onConfirm={() => setAppState('handoff')}
             busy={busy}
           />
@@ -596,8 +625,18 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Nearby health providers */}
-          <HealthProviderFinder onClose={() => {}} />
+          {/* Nearby health providers — BUG-09: toggle so Close actually works */}
+          {!showProviders ? (
+            <button
+              type="button"
+              onClick={() => setShowProviders(true)}
+              className="btn-secondary min-h-[44px]"
+            >
+              Find nearby clinics / Tafuta kliniki za karibu
+            </button>
+          ) : (
+            <HealthProviderFinder onClose={() => setShowProviders(false)} />
+          )}
 
           {/* Disclaimer */}
           <p className="text-xs text-gray-400 text-center leading-relaxed">

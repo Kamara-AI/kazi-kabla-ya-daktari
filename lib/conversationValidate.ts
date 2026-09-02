@@ -111,7 +111,7 @@ export function parseTurn(value: unknown): ClaudeTurn {
   if (turn.answer_options.some((option) => !option.trim())) {
     throw new InvalidTurnError("answer_options contained a blank option");
   }
-  if (turn.answer_options.length > 6) {
+  if (turn.answer_options.length > 5) {
     throw new InvalidTurnError(
       `answer_options had ${turn.answer_options.length} options`,
     );

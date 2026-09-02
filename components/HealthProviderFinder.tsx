@@ -244,7 +244,7 @@ export default function HealthProviderFinder({ onClose }: HealthProviderFinderPr
           </p>
         </div>
 
-        <button onClick={handleSearch} className="btn-primary">
+        <button type="button" onClick={handleSearch} className="btn-primary">
           Find nearby clinics
           <span className="text-blue-200 text-sm font-normal">/ Tafuta kliniki za karibu</span>
         </button>
@@ -299,7 +299,7 @@ export default function HealthProviderFinder({ onClose }: HealthProviderFinderPr
               Tafadhali mwulize muuguzi.
             </p>
           </div>
-          <button onClick={handleSearch} className="btn-secondary">
+          <button type="button" onClick={handleSearch} className="btn-secondary">
             Try again / Jaribu tena
           </button>
         </div>
@@ -326,7 +326,7 @@ export default function HealthProviderFinder({ onClose }: HealthProviderFinderPr
           🔒 Your location was not stored. / Mahali pako halikuhifadhiwa.
         </p>
 
-        <button onClick={handleSearch} className="btn-secondary">
+        <button type="button" onClick={handleSearch} className="btn-secondary">
           Search again / Tafuta tena
         </button>
       </div>
@@ -340,7 +340,7 @@ export default function HealthProviderFinder({ onClose }: HealthProviderFinderPr
           <p className="font-semibold text-red-900">Could not find nearby clinics.</p>
           <p className="text-red-700 text-sm mt-2 leading-relaxed">{errorMessage}</p>
         </div>
-        <button onClick={handleSearch} className="btn-primary">
+        <button type="button" onClick={handleSearch} className="btn-primary">
           Try again / Jaribu tena
         </button>
       </div>

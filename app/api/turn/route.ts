@@ -203,6 +203,7 @@ const EMIT_TURN_TOOL = {
         description:
           "MCQ choices for this question (2–5 items), or empty array for free text. Never include an 'I don't know' option — the UI adds that separately.",
         items: { type: "string" },
+        maxItems: 5,
       },
     },
     required: [
@@ -324,14 +325,13 @@ export async function POST(req: Request): Promise<Response> {
     const lastRole = apiMessages[apiMessages.length - 1]?.role;
     if (lastRole === "user") {
       // Append the force-summary instruction as a synthetic user addendum.
-      // This is safe because it follows the last real user message and tells
-      // the model to wrap up — it does not invent patient words.
+      // Slice to MAX_MESSAGE_CHARS so the concatenation cannot push content
+      // past the validated limit (BUG-03).
+      const original = apiMessages[apiMessages.length - 1].content;
+      const appended = original + "\n\n" + PATIENT_REQUESTED_SUMMARY;
       apiMessages[apiMessages.length - 1] = {
         role: "user",
-        content:
-          apiMessages[apiMessages.length - 1].content +
-          "\n\n" +
-          PATIENT_REQUESTED_SUMMARY,
+        content: appended.slice(0, MAX_MESSAGE_CHARS),
       };
     } else {
       // Last turn was assistant — add a fresh user turn with the instruction.
