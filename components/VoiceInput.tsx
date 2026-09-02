@@ -132,6 +132,11 @@ export default function VoiceInput({ onTranscript, onDangerSign, disabled = fals
   const localeIndexRef = useRef(0);
   // Accumulate final segments across recognition events
   const accumulatedRef = useRef('');
+  // Silence timer — fires 1.5 s after the last isFinal result to auto-stop.
+  // This replaces waiting for the browser's own silence detection (5–7 s).
+  const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Hard cap — stops after 15 s regardless, so the mic never stays open forever.
+  const maxDurationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Check support after mount (SSR-safe)
   useEffect(() => {
@@ -141,6 +146,8 @@ export default function VoiceInput({ onTranscript, onDangerSign, disabled = fals
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+      if (maxDurationTimerRef.current) clearTimeout(maxDurationTimerRef.current);
       recognitionRef.current?.abort();
     };
   }, []);
@@ -165,6 +172,15 @@ export default function VoiceInput({ onTranscript, onDangerSign, disabled = fals
   );
 
   const stopRecognition = useCallback(() => {
+    // Clear both timers whenever we stop — avoids double-triggering onend.
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = null;
+    }
+    if (maxDurationTimerRef.current) {
+      clearTimeout(maxDurationTimerRef.current);
+      maxDurationTimerRef.current = null;
+    }
     if (recognitionRef.current) {
       recognitionRef.current.onend = null; // prevent auto-transition
       recognitionRef.current.abort();
@@ -188,6 +204,10 @@ export default function VoiceInput({ onTranscript, onDangerSign, disabled = fals
 
       rec.onstart = () => {
         setVoiceState('listening');
+        // Hard cap — stop after 15 s so the mic never stays open indefinitely.
+        maxDurationTimerRef.current = setTimeout(() => {
+          recognitionRef.current?.stop(); // graceful — triggers onend naturally
+        }, 15_000);
       };
 
       rec.onresult = (event: SpeechRecognitionEvent) => {
@@ -206,6 +226,17 @@ export default function VoiceInput({ onTranscript, onDangerSign, disabled = fals
 
         accumulatedRef.current = finalText;
         setInterim(interimText);
+
+        // Silence timer — reset on every result event, then auto-stop 1.5 s
+        // after the last isFinal result. This is far faster than waiting for
+        // the browser's own silence detection (typically 5–7 s with continuous=true).
+        if (finalText) {
+          if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+          silenceTimerRef.current = setTimeout(() => {
+            // Graceful stop — lets onend fire and transition to reviewing.
+            recognitionRef.current?.stop();
+          }, 1500);
+        }
 
         // Run danger check on combined text — catch emergencies mid-sentence
         const textToCheck = finalText + (interimText ? ' ' + interimText : '');
