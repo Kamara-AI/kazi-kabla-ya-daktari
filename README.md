@@ -51,7 +51,7 @@ The nurse paraphrases what they hear. By the time the patient sees the doctor, t
 | Voice input | Web Speech API — sw-KE → en-KE → en fallback |
 | PDF generation | Hand-rolled A4 PDF serialiser (no npm dependencies) |
 | Health providers | OpenStreetMap Overpass API + Haversine distance sort |
-| Deployment | Vercel (edge runtime) |
+| Deployment | Vercel (edge runtime) | Render |
 
 ---
 
