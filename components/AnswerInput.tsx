@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { checkDangerSigns } from '@/lib/interceptor';
 
 /** Max characters per message — mirrors the API route's per-message limit. */
 export const MAX_MESSAGE_CHARS = 2000;
@@ -19,11 +20,13 @@ export const NOT_SURE_ANSWER = "I'm not sure / Sijui";
 export function AnswerInput({
   options,
   onAnswer,
+  onDangerSign,
   busy,
   voiceDraft,
 }: {
   options: string[];
   onAnswer: (text: string) => void;
+  onDangerSign: (type: 'RED' | 'AMBER') => void;
   busy: boolean;
   /** Pre-fills the textarea with a voice transcript for patient review/edit before submit. */
   voiceDraft?: string;
@@ -73,7 +76,11 @@ export function AnswerInput({
             ? 'Or answer in your own words…'
             : 'Type your answer here…'
         }
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          setText(e.target.value);
+          const danger = checkDangerSigns(e.target.value);
+          if (danger !== 'CLEAR') onDangerSign(danger);
+        }}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && trimmed) {
             submit(trimmed);

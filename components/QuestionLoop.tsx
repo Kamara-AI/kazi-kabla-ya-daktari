@@ -50,6 +50,7 @@ export function QuestionLoop({
   busy,
   answered,
   onAnswer,
+  onDangerSign,
   onFinish,
   voiceDraft,
 }: {
@@ -66,6 +67,7 @@ export function QuestionLoop({
   /** Number of questions answered so far (for the step counter). */
   answered: number;
   onAnswer: (text: string) => void;
+  onDangerSign: (type: 'RED' | 'AMBER') => void;
   onFinish: () => void;
   /** Voice transcript to pre-fill AnswerInput for patient review before submit. */
   voiceDraft?: string;
@@ -119,7 +121,7 @@ export function QuestionLoop({
       </h2>
 
       {/* Answer input */}
-      <AnswerInput options={options} onAnswer={onAnswer} busy={busy} voiceDraft={voiceDraft} />
+      <AnswerInput options={options} onAnswer={onAnswer} onDangerSign={onDangerSign} busy={busy} voiceDraft={voiceDraft} />
 
       {/* "Generate summary" escape hatch */}
       <div className="flex justify-end">

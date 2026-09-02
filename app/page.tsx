@@ -434,7 +434,11 @@ export default function Home() {
             maxLength={1000}
             placeholder="e.g. Nimekuwa na maumivu ya kichwa kwa siku tatu…"
             value={welcomeText}
-            onChange={(e) => setWelcomeText(e.target.value)}
+            onChange={(e) => {
+              setWelcomeText(e.target.value);
+              const danger = checkDangerSigns(e.target.value);
+              if (danger !== 'CLEAR') handleEmergency(danger);
+            }}
             aria-label="Describe your main problem"
             disabled={busy}
           />
@@ -492,6 +496,7 @@ export default function Home() {
             busy={busy}
             answered={answered}
             onAnswer={handleAnswer}
+            onDangerSign={handleEmergency}
             onFinish={handleFinishEarly}
             voiceDraft={voiceDraft}
           />
