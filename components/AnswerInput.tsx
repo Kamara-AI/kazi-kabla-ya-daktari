@@ -8,7 +8,7 @@
  * Touch targets: all interactive elements are min-h-[44px] per spec §4.4.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 /** Max characters per message — mirrors the API route's per-message limit. */
 export const MAX_MESSAGE_CHARS = 2000;
@@ -20,13 +20,24 @@ export function AnswerInput({
   options,
   onAnswer,
   busy,
+  voiceDraft,
 }: {
   options: string[];
   onAnswer: (text: string) => void;
   busy: boolean;
+  /** Pre-fills the textarea with a voice transcript for patient review/edit before submit. */
+  voiceDraft?: string;
 }) {
   const [text, setText] = useState('');
   const trimmed = text.trim();
+
+  // When a confirmed voice transcript arrives, pre-fill the textarea so the
+  // patient can review or edit it before pressing Send. Do NOT auto-submit.
+  useEffect(() => {
+    if (voiceDraft) {
+      setText(voiceDraft);
+    }
+  }, [voiceDraft]);
 
   const submit = (value: string): void => {
     setText('');

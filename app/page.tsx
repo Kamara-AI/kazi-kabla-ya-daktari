@@ -77,6 +77,10 @@ export default function Home() {
   // Welcome screen state
   const [welcomeText, setWelcomeText] = useState('');
 
+  // Voice draft — holds a confirmed voice transcript for AnswerInput pre-fill
+  // during the asking state. Cleared on submit and on purge.
+  const [voiceDraft, setVoiceDraft] = useState('');
+
   // Inactivity banner
   const [showInactivityWarning, setShowInactivityWarning] = useState(false);
 
@@ -95,6 +99,7 @@ export default function Home() {
     setCopied(false);
     setShowProviders(false);
     setWelcomeText('');
+    setVoiceDraft('');
     setShowInactivityWarning(false);
 
     if (warnTimerRef.current) clearTimeout(warnTimerRef.current);
@@ -248,6 +253,9 @@ export default function Home() {
     async (answer: string) => {
       if (!answer.trim() || busy || !currentTurn) return;
 
+      // Clear the voice draft so the next question starts with an empty textarea.
+      setVoiceDraft('');
+
       const danger = checkDangerSigns(answer);
       if (danger !== 'CLEAR') {
         handleEmergency(danger);
@@ -310,6 +318,7 @@ export default function Home() {
   // ---------------------------------------------------------------------------
   const handleEditRequest = useCallback(async () => {
     setCurrentTurn(null);
+    setVoiceDraft('');
     setAppState('asking'); // shows loading spinner (currentTurn === null)
     const turn = await callTurn(messages);
     if (!turn) return; // network error — stay in asking with spinner
@@ -484,10 +493,13 @@ export default function Home() {
             answered={answered}
             onAnswer={handleAnswer}
             onFinish={handleFinishEarly}
+            voiceDraft={voiceDraft}
           />
-          {/* Voice input rendered below the text answer area */}
+          {/* Voice input rendered below the text answer area.
+              onTranscript pre-fills AnswerInput so the patient can review/edit
+              before pressing Send — it does NOT auto-submit. */}
           <VoiceInput
-            onTranscript={handleAnswer}
+            onTranscript={setVoiceDraft}
             onDangerSign={handleEmergency}
             disabled={busy}
           />

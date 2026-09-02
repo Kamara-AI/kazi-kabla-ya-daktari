@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { LanguageProvider } from '@/lib/languageContext';
+import Navbar from '@/components/Navbar';
 
 export const metadata: Metadata = {
   title: 'Kazi: Kabla ya Daktari',
@@ -24,7 +26,12 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         {/* maximum-scale=1 prevents auto-zoom on input focus on iOS — important for one-handed use */}
       </head>
-      <body>{children}</body>
+      <body>
+        <LanguageProvider>
+          <Navbar />
+          {children}
+        </LanguageProvider>
+      </body>
     </html>
   );
 }

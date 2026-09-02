@@ -51,6 +51,7 @@ export function QuestionLoop({
   answered,
   onAnswer,
   onFinish,
+  voiceDraft,
 }: {
   /** Full conversation history, alternating user / assistant. */
   log: Message[];
@@ -66,6 +67,8 @@ export function QuestionLoop({
   answered: number;
   onAnswer: (text: string) => void;
   onFinish: () => void;
+  /** Voice transcript to pre-fill AnswerInput for patient review before submit. */
+  voiceDraft?: string;
 }) {
   const banner = tone === 'normal' ? null : BANNERS[tone];
 
@@ -116,7 +119,7 @@ export function QuestionLoop({
       </h2>
 
       {/* Answer input */}
-      <AnswerInput options={options} onAnswer={onAnswer} busy={busy} />
+      <AnswerInput options={options} onAnswer={onAnswer} busy={busy} voiceDraft={voiceDraft} />
 
       {/* "Generate summary" escape hatch */}
       <div className="flex justify-end">

@@ -151,10 +151,17 @@ function layoutText(content: string): PdfLine[][] {
   const rawLines = content.split('\n');
 
   for (const raw of rawLines) {
-    const trimmed = raw.trimEnd();
+    // Normalise em dash and en dash to ASCII hyphen before any matching or
+    // encoding. U+2014 charCodeAt & 0xff = 0x14 (a control character) — if it
+    // slips through WINANSI lookup it renders as a box or nothing in Helvetica.
+    // Replacing here keeps all downstream code purely ASCII-safe.
+    const normalisedRaw = raw.replace(/[\u2013\u2014]/g, '-');
+    const trimmed = normalisedRaw.trimEnd();
 
     // Title line — matches the first line emitted by summaryToText()
-    if (trimmed === 'KABLA YA DAKTARI \u2014 AI-assisted intake summary') {
+    // The em dash in summaryToText's output has been normalised to '-' above,
+    // so the match target uses '-' rather than the raw Unicode character.
+    if (trimmed === 'KABLA YA DAKTARI - AI-assisted intake summary') {
       addLine(trimmed, TITLE_SIZE, 0, true, 0);
       continue;
     }
